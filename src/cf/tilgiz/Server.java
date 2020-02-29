@@ -1,6 +1,9 @@
 package cf.tilgiz;
 
 import java.io.*;
+import java.sql.Connection;
+
+import static cf.tilgiz.MysqlConnect.getConnection;
 
 public class Server {
 
@@ -29,6 +32,21 @@ public class Server {
             }
         }
         return true;
+    }
+
+    public static void connect(){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()){
+
+                System.out.println("Connection to Store DB succesfull!");
+            }
+        }
+        catch(Exception ex){
+            System.out.println("Connection failed...");
+
+            System.out.println(ex);
+        }
     }
 
 }
