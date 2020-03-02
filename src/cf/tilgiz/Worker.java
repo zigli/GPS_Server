@@ -7,7 +7,6 @@ import java.net.Socket;
 public class Worker {
     ServerSocket serverSocket;
     Socket clientSocket;
-    BufferedWriter writer;
     BufferedReader reader;
 
     Worker(int port) throws IOException {
