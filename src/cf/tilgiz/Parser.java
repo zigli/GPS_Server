@@ -58,13 +58,13 @@ public class Parser {
     }
 
     public boolean checkDbSkip() {
-        if (new File(Server.ONLINE_TRACK_FILE).isFile()) {
+        if (new File(Server.ONLINE_TRACK_FILE).isFile() && !parsedString[3].contains("LK")) {
             String stringFromStatusFile = readFile(Server.ONLINE_TRACK_FILE);
             long time = Long.parseLong(stringFromStatusFile.split(",")[0]);
             String lon = stringFromStatusFile.split(",")[2].substring(0, 6);
             String lat = stringFromStatusFile.split(",")[3].substring(0, 6);
-            if ((now - time) > Server.SKIP_DB_TIMEOUT && lon.equals(parsedString[7].substring(0, 6)) && lat.equals(parsedString[9].substring(0, 6)))
-                return true;
+            //System.out.println(now + " - "+ time +" = "+ (now - time));
+            return (now - time) < Server.SKIP_DB_TIMEOUT && lon.equals(parsedString[7].substring(0, 6)) && lat.equals(parsedString[9].substring(0, 6));
         }
         return false;
     }
