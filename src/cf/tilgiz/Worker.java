@@ -31,6 +31,10 @@ public class Worker {
         return reader.readLine();
     }
 
+    public String getClientIpAddress(){
+        return clientSocket.getInetAddress().getHostAddress();
+    }
+
     public void close() throws IOException {
         reader.close();
         clientSocket.close();
