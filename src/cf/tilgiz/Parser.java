@@ -15,18 +15,6 @@ public class Parser {
         this.now = System.currentTimeMillis() / 1000;
     }
 
-    public long getNow() {
-        return now;
-    }
-
-    public String getLongitude() {
-        return parsedString[7];
-    }
-
-    public String getLatitude() {
-        return parsedString[9];
-    }
-
     public void parseString() {
         String clearStr = inputString.substring(inputString.indexOf("[") + 1, inputString.indexOf("]"));
         parsedString = clearStr.split("[*,]");
