@@ -4,9 +4,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Properties;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import static cf.tilgiz.MysqlConnect.*;
 
@@ -30,8 +32,30 @@ public class Server {
         SKIP_DB_TIMEOUT = Integer.parseInt(props.getProperty("SKIP_DB_TIMEOUT"));
     }
 
+    static Logger LOGGER;
+
+    static {
+        try(FileInputStream ins = new FileInputStream(".\\src\\cf\\tilgiz\\log.config")){
+            LogManager.getLogManager().readConfiguration(ins);
+            LOGGER = Logger.getLogger(Server.class.getName());
+        }catch (Exception ignore){
+            ignore.printStackTrace();
+        }
+    }
+    static FileHandler fh;
+    static {
+        try {
+            fh = new FileHandler("E:/temp/MyLogFile.log");
+            LOGGER.addHandler(fh);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void main(String[] args) throws IOException {
-        int port = (args.length != 0 && isNumeric(args[0])) ? Integer.parseInt(args[0]) : 8000;
+        int port = (args.length != 0 && isNumeric(args[0])) ? Integer.parseInt(args[0]) : 5000;
+        LOGGER.log(Level.INFO,"Server started. Waiting connection on port: " + port);
         runServer(port);
     }
 
@@ -40,20 +64,25 @@ public class Server {
         while (true) {
             server.accept();
             String clientIp = server.getClientIpAddress();
+            LOGGER.log(Level.INFO,"Client connected with ip: " + clientIp);
             String str = server.read();
             System.out.println(clientIp + " : " + str);
 
             String inputStr = "[3G*1208014868*00E3*UD2,290318,170736,V,54.891907,N,52.3444133,E,0.00,133.6,0.0,7,100,100,0,0,00000008,6,255,250,2,1634,46522,149,1634,47882,138,1634,46532,137,1634,49333,137,1634,47941,137,1634,47884,136,1,Keenetic-2154,28:28:5d:b9:7d:f0,-79,37.3]";
 //            String inputStr = "[3G*1208014868*000A*LK,0,0,100]";
 
-            Parser parser = new Parser(inputStr, clientIp);
-            parser.parseString();
-            //System.out.println(parser.checkDbSkip());
-            if (!parser.checkDbSkip()) {
-                System.out.println(parser.buildQuery());
-                Connection connection = connectDb();
-                if (connection != null) disconnectDb(connection);
+            Parser parser = new Parser(str, clientIp);
+            try {
+                parser.parseString();
+                if (!parser.checkDbSkip()) {
+                    System.out.println(parser.buildQuery());
+                    Connection connection = connectDb();
+                    if (connection != null) disconnectDb(connection);
+                }
+            }catch (Exception e) {
+                LOGGER.log(Level.WARNING,"Incorrect input data");
             }
+            //System.out.println(parser.checkDbSkip());
             server.close();
         }
     }
