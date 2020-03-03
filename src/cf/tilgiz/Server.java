@@ -42,7 +42,7 @@ public class Server {
     }
 
     public static void main(String[] args) throws IOException {
-        int port = (args.length != 0 && isNumeric(args[0])) ? Integer.parseInt(args[0]) : 5000;
+        int port = (args.length != 0 && isNumeric(args[0])) ? Integer.parseInt(args[0]) : 8000;
         LOGGER.log(Level.INFO,"Server started. Waiting connection on port: " + port);
         runServer(port);
     }
