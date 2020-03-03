@@ -13,7 +13,7 @@ public class MysqlConnect {
     public static Connection getConnection() throws IOException, SQLException {
 
         Properties props = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get(".\\database.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("database.properties"))) {
             props.load(in);
         }
         String url = props.getProperty("url");

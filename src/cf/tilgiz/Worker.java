@@ -7,7 +7,7 @@ import java.net.Socket;
 public class Worker {
     ServerSocket serverSocket;
     Socket clientSocket;
-    BufferedReader reader;
+    DataInputStream reader;
 
     Worker(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -18,17 +18,13 @@ public class Worker {
     }
 
     private void createReaderStream() throws IOException {
-        reader =
-                new BufferedReader(
-                        new InputStreamReader(
-                                clientSocket.getInputStream()
-                        )
-                );
+//        reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        reader = new DataInputStream(clientSocket.getInputStream());
     }
 
     public String read() throws IOException {
         createReaderStream();
-        return reader.readLine();
+        return reader.readUTF();
     }
 
     public String getClientIpAddress(){

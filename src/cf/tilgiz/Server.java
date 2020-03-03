@@ -19,7 +19,7 @@ public class Server {
 
     static {
         Properties props = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get(".\\Server.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("Server.properties"))) {
             props.load(in);
         } catch (IOException e) {
             System.out.println("Can not read configuration file (Server.properties)");
@@ -33,7 +33,7 @@ public class Server {
     static Logger LOGGER;
 
     static {
-        try(FileInputStream ins = new FileInputStream(".\\log.config")){
+        try(FileInputStream ins = new FileInputStream("log.config")){
             LogManager.getLogManager().readConfiguration(ins);
             LOGGER = Logger.getLogger(Server.class.getName());
         }catch (Exception ignore){
@@ -54,6 +54,7 @@ public class Server {
             String clientIp = server.getClientIpAddress();
             LOGGER.log(Level.INFO,"Client connected with ip: " + clientIp);
             String str = server.read();
+
             System.out.println(clientIp + " : " + str);
 
             String inputStr = "[3G*1208014868*00E3*UD2,290318,170736,V,54.891907,N,52.3444133,E,0.00,133.6,0.0,7,100,100,0,0,00000008,6,255,250,2,1634,46522,149,1634,47882,138,1634,46532,137,1634,49333,137,1634,47941,137,1634,47884,136,1,Keenetic-2154,28:28:5d:b9:7d:f0,-79,37.3]";
