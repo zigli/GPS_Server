@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.Properties;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -20,10 +19,9 @@ public class Server {
 
     static {
         Properties props = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get(".\\src\\cf\\tilgiz\\Server.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get(".\\Server.properties"))) {
             props.load(in);
         } catch (IOException e) {
-//            e.printStackTrace();
             System.out.println("Can not read configuration file (Server.properties)");
             System.exit(0);
         }
@@ -35,23 +33,13 @@ public class Server {
     static Logger LOGGER;
 
     static {
-        try(FileInputStream ins = new FileInputStream(".\\src\\cf\\tilgiz\\log.config")){
+        try(FileInputStream ins = new FileInputStream(".\\log.config")){
             LogManager.getLogManager().readConfiguration(ins);
             LOGGER = Logger.getLogger(Server.class.getName());
         }catch (Exception ignore){
             ignore.printStackTrace();
         }
     }
-    static FileHandler fh;
-    static {
-        try {
-            fh = new FileHandler("E:/temp/MyLogFile.log");
-            LOGGER.addHandler(fh);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public static void main(String[] args) throws IOException {
         int port = (args.length != 0 && isNumeric(args[0])) ? Integer.parseInt(args[0]) : 5000;

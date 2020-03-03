@@ -51,7 +51,6 @@ public class Parser {
             long time = Long.parseLong(stringFromStatusFile.split(",")[0]);
             String lon = stringFromStatusFile.split(",")[2].substring(0, 6);
             String lat = stringFromStatusFile.split(",")[3].substring(0, 6);
-            //System.out.println(now + " - "+ time +" = "+ (now - time));
             return (now - time) < Server.SKIP_DB_TIMEOUT && lon.equals(parsedString[7].substring(0, 6)) && lat.equals(parsedString[9].substring(0, 6));
         }
         return false;
