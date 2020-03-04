@@ -95,17 +95,4 @@ public class Server {
             server.close();
         }
     }
-
-    public static boolean isNumeric(final String str) {
-        if (str == null || str.length() == 0) {
-            return false;
-        }
-        for (char c : str.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
 }

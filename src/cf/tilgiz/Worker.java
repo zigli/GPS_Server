@@ -3,6 +3,7 @@ package cf.tilgiz;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class Worker {
     ServerSocket serverSocket;
