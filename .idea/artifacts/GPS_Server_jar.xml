@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/GPS_Server_jar</output-path>
     <root id="archive" name="GPS_Server.jar">
       <element id="module-output" name="GPS_Server" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../mysql-connector-java-8.0.19/mysql-connector-java-8.0.19.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/mysql-connector-java-8.0.19.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
