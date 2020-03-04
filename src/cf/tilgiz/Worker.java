@@ -18,21 +18,20 @@ public class Worker {
     }
 
     private void createReaderStream() throws IOException {
-//        reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         reader = new BufferedInputStream(clientSocket.getInputStream());
     }
 
     public String read() throws IOException {
         createReaderStream();
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuilder = new StringBuilder();
         int c;
         while((c=reader.read())!=-1){
-            stringBuffer.append((char)c);
+            stringBuilder.append((char)c);
             if (c == ']') {
                 break;
             }
         }
-        return stringBuffer.toString();
+        return stringBuilder.toString();
     }
 
     public String getClientIpAddress(){

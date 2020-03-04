@@ -20,7 +20,7 @@ public class Parser {
         parsedString = clearStr.split("[*,]");
     }
 
-    public String buildQuery() {
+    public String buildQuery() throws IOException{
         String query;
         StringBuilder sqlVariable = new StringBuilder();
         StringBuilder sqlValues = new StringBuilder();
@@ -45,7 +45,7 @@ public class Parser {
         return query;
     }
 
-    public boolean checkDbSkip() {
+    public boolean checkDbSkip() throws IOException {
         if (new File(Server.ONLINE_TRACK_FILE).isFile() && !parsedString[3].contains("LK")) {
             String stringFromStatusFile = readFile(Server.ONLINE_TRACK_FILE);
             long time = Long.parseLong(stringFromStatusFile.split(",")[0]);
@@ -56,35 +56,26 @@ public class Parser {
         return false;
     }
 
-    public void writeFile(String filename, String string) {
-        try {
-            File file = new File(filename);
-            FileWriter fileWriter = new FileWriter(file);
-            fileWriter.write(string);
-            fileWriter.flush();
-            fileWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void writeFile(String filename, String string) throws IOException {
+        File file = new File(filename);
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(string);
+        fileWriter.flush();
+        fileWriter.close();
     }
 
-    public String readFile(String filename) {
-        String output = null;
-        try {
-            File file = new File(filename);
-            FileReader fileReader = new FileReader(file);
-            StringBuilder stringBuilder = new StringBuilder();
-            int numCharsRead;
-            char[] charArray = new char[1024];
-            while ((numCharsRead = fileReader.read(charArray)) > 0) {
-                stringBuilder.append(charArray, 0, numCharsRead);
-            }
-            fileReader.close();
-            output = stringBuilder.toString();
-        } catch (IOException e) {
-            //e.printStackTrace();
-            System.out.println("File " + filename + " not found!");
+    public String readFile(String filename) throws IOException {
+        String output;
+        File file = new File(filename);
+        FileReader fileReader = new FileReader(file);
+        StringBuilder stringBuilder = new StringBuilder();
+        int numCharsRead;
+        char[] charArray = new char[1024];
+        while ((numCharsRead = fileReader.read(charArray)) > 0) {
+            stringBuilder.append(charArray, 0, numCharsRead);
         }
+        fileReader.close();
+        output = stringBuilder.toString();
         return output;
     }
 }
