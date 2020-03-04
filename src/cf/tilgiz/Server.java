@@ -1,6 +1,7 @@
 package cf.tilgiz;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -13,6 +14,7 @@ import static cf.tilgiz.MysqlConnect.*;
 
 public class Server {
 
+    public static String FILE_SEPARATOR = File.separator;
     public static final String ONLINE_STATUS_FILE;
     public static final String ONLINE_TRACK_FILE;
     public static final int SKIP_DB_TIMEOUT;
