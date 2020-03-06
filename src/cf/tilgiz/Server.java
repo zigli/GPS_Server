@@ -52,7 +52,7 @@ public class Server {
     public static void main(String[] args){
         try {
             runServer(LISTEN_PORT);
-        } catch (IllegalArgumentException | IOException e) {
+        } catch (Exception e) {
             LOGGER.log(Level.WARNING,"runServer exception:", e);
         }
 
