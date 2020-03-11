@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -22,11 +23,11 @@ public class Server {
     private static Logger LOGGER;
 
     static {
-        try(FileInputStream ins = new FileInputStream("log.config")){
+        try (FileInputStream ins = new FileInputStream("log.config")) {
             LogManager.getLogManager().readConfiguration(ins);
             LOGGER = Logger.getLogger(Server.class.getName());
-        }catch (Exception e){
-            LOGGER.log(Level.WARNING,"Exception (log.config)", e);
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Exception (log.config)", e);
         }
     }
 
@@ -35,7 +36,7 @@ public class Server {
         try (InputStream in = Files.newInputStream(Paths.get("Server.properties"))) {
             props.load(in);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING,"Can not read configuration file (Server.properties)", e);
+            LOGGER.log(Level.WARNING, "Can not read configuration file (Server.properties)", e);
             System.exit(0);
         }
         ONLINE_STATUS_FILE = props.getProperty("ONLINE_STATUS_FILE");
@@ -44,55 +45,58 @@ public class Server {
         try {
             LISTEN_PORT = Integer.parseInt(props.getProperty("LISTEN_PORT"));
         } catch (NumberFormatException e) {
-            LOGGER.log(Level.WARNING,"Invalid port number, ", e);
+            LOGGER.log(Level.WARNING, "Invalid port number, ", e);
             System.exit(0);
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         try {
             runServer(LISTEN_PORT);
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING,"runServer exception:", e);
+            LOGGER.log(Level.WARNING, "runServer exception:", e);
         }
 
     }
 
     private static void runServer(int port) throws IOException {
         Worker server = new Worker(port);
-        LOGGER.log(Level.INFO,"Server started. Waiting connection on port: " + port);
+        LOGGER.log(Level.INFO, "Server started. Waiting connection on port: " + port);
         while (true) {
             server.accept();
             String clientIp = server.getClientIpAddress();
-            LOGGER.log(Level.INFO,"Client connected with ip: " + clientIp);
+            LOGGER.log(Level.INFO, "Client connected with ip: " + clientIp);
             String str = server.read();
-            LOGGER.log(Level.INFO,"Input string: " + str);
-            Parser parser = new Parser(str, clientIp);
+            LOGGER.log(Level.INFO, "Input string: " + str);
+            ParserNew parser = new ParserNew(str, clientIp);
             try {
                 parser.parseString();
-                if (!parser.checkDbSkip()) {
-                    try {
-                        String query = parser.buildQuery();
-                        LOGGER.log(Level.INFO,"Query string: " + query);
-                        int rows = writeDb(query);
-                        if(rows == -1){
-                            LOGGER.log(Level.WARNING,"Can not write DB!");
-                        } else {
-                            LOGGER.log(Level.INFO,rows + " rows written DB!");
+                List<Query> queryList = parser.buildQueryList();
+
+                for (Query query : queryList) {
+                    if (!query.isSkip()) {
+                        try {
+                            LOGGER.log(Level.INFO, "Query string: " + query.getQueryString());
+                            int rows = writeDb(query.getQueryString());
+                            if (rows == -1) {
+                                LOGGER.log(Level.WARNING, "Can not write DB!");
+                            } else {
+                                LOGGER.log(Level.INFO, rows + " rows written DB!");
+                            }
+                        } catch (IOException e) {
+                            LOGGER.log(Level.WARNING, "IO exception catched:", e);
+                        } catch (SQLException e) {
+                            LOGGER.log(Level.WARNING, "SQL exception catched:", e);
+                        } catch (Exception e) {
+                            LOGGER.log(Level.WARNING, "Exception catched:", e);
                         }
-                    }catch (IOException e){
-                        LOGGER.log(Level.WARNING,"IO exception catched:", e);
-                    }catch (SQLException e){
-                        LOGGER.log(Level.WARNING,"SQL exception catched:", e);
-                    }catch (Exception e){
-                        LOGGER.log(Level.WARNING,"Exception catched:", e);
                     }
                 }
 
-            }catch (IOException e){
-                LOGGER.log(Level.WARNING,"IO exception catched:", e);
-            }catch (Exception e) {
-                LOGGER.log(Level.WARNING,"Incorrect input data", e);
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, "IO exception catched:", e);
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Incorrect input data", e);
             }
             server.close();
         }

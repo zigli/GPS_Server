@@ -3,12 +3,11 @@ package cf.tilgiz;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 
 public class Worker {
     ServerSocket serverSocket;
     Socket clientSocket;
-    BufferedInputStream reader;
+    BufferedReader reader;
 
     Worker(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -19,20 +18,17 @@ public class Worker {
     }
 
     private void createReaderStream() throws IOException {
-        reader = new BufferedInputStream(clientSocket.getInputStream());
+        reader =
+                new BufferedReader(
+                        new InputStreamReader(
+                                clientSocket.getInputStream()
+                        )
+                );
     }
 
     public String read() throws IOException {
         createReaderStream();
-        StringBuilder stringBuilder = new StringBuilder();
-        int c;
-        while((c=reader.read())!=-1){
-            stringBuilder.append((char)c);
-            if (c == ']') {
-                break;
-            }
-        }
-        return stringBuilder.toString();
+        return reader.readLine();
     }
 
     public String getClientIpAddress(){
